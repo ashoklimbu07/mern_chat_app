@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { api } from "../api";
 
 export default function Login() {
     const navigate = useNavigate();
@@ -19,12 +20,19 @@ export default function Login() {
         setError("");
         setLoading(true);
         try {
-            const res = await fetch("/api/auth/login", {
+            const res = await api("/api/auth/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: form.email, password: form.password }),
             });
-            const data = await res.json();
+
+            let data;
+            try {
+                data = await res.json();
+            } catch {
+                throw new Error("Cannot reach the server. Make sure the backend is running.");
+            }
+
             if (!res.ok) throw new Error(data.message || "Login failed.");
             localStorage.setItem("token", data.token);
             localStorage.setItem("userId", data.user.id);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import socket from "../socket";
+import { api } from "../api";
 import Sidebar from "../components/chat/Sidebar";
 import ChatHeader from "../components/chat/ChatHeader";
 import MessageList from "../components/chat/MessageList";
@@ -23,7 +24,7 @@ export default function Chat() {
     // fetch stats once on mount
     useEffect(() => {
         if (!token) return;
-        fetch("/api/users/stats", { headers: { Authorization: `Bearer ${token}` } })
+        api("/api/users/stats", { headers: { Authorization: `Bearer ${token}` } })
             .then((r) => r.json())
             .then((data) => { if (data.success) setStats(data.stats); });
     }, [token]);
@@ -55,7 +56,7 @@ export default function Chat() {
 
     // fetch user list
     useEffect(() => {
-        fetch("/api/users", { headers: { Authorization: `Bearer ${token}` } })
+        api("/api/users", { headers: { Authorization: `Bearer ${token}` } })
             .then((r) => r.json())
             .then((data) => { if (data.success) setUsers(data.users); });
     }, [token]);
@@ -63,7 +64,7 @@ export default function Chat() {
     // fetch message history on contact change
     useEffect(() => {
         if (!activeUser) return;
-        fetch(`/api/messages/${activeUser._id}`, { headers: { Authorization: `Bearer ${token}` } })
+        api(`/api/messages/${activeUser._id}`, { headers: { Authorization: `Bearer ${token}` } })
             .then((r) => r.json())
             .then((data) => { if (data.success) setMessages(data.messages); });
     }, [activeUser, token]);
@@ -88,7 +89,7 @@ export default function Chat() {
         // increment total message count immediately
         setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
 
-        const res = await fetch(`/api/messages/${activeUser._id}`, {
+        const res = await api(`/api/messages/${activeUser._id}`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ text, optimisticId }),
@@ -107,7 +108,7 @@ export default function Chat() {
     };
 
     const handleEdit = async (msgId, newText) => {
-        const res = await fetch(`/api/messages/${msgId}`, {
+        const res = await api(`/api/messages/${msgId}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
             body: JSON.stringify({ text: newText }),
@@ -119,7 +120,7 @@ export default function Chat() {
     };
 
     const handleDelete = async (msgId) => {
-        const res = await fetch(`/api/messages/${msgId}`, {
+        const res = await api(`/api/messages/${msgId}`, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${token}` },
         });
