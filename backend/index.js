@@ -1,5 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import { connectMongoDb } from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 import authRoutes from "./routes/auth.routes.js";
@@ -10,6 +11,7 @@ const port = process.env.PORT || 3000;
 const app = express();
 
 // middlewares
+app.use(cors());
 app.use(express.json());
 
 // routes
