@@ -18,15 +18,36 @@ export default function Chat() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState("");
     const [onlineUsers, setOnlineUsers] = useState([]);
+    const [stats, setStats] = useState(null);
+
+    // fetch stats once on mount
+    useEffect(() => {
+        if (!token) return;
+        fetch("/api/users/stats", { headers: { Authorization: `Bearer ${token}` } })
+            .then((r) => r.json())
+            .then((data) => { if (data.success) setStats(data.stats); });
+    }, [token]);
 
     // socket setup
     useEffect(() => {
         socket.connect();
         socket.on("onlineUsers", setOnlineUsers);
-        socket.on("receiveMessage", (msg) => setMessages((prev) => [...prev, msg]));
+        socket.on("receiveMessage", (msg) => {
+            setMessages((prev) => [...prev, msg]);
+            setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
+        });
+        socket.on("messageEdited", (updated) =>
+            setMessages((prev) => prev.map((m) => (m._id === updated._id ? updated : m)))
+        );
+        socket.on("messageDeleted", ({ _id }) => {
+            setMessages((prev) => prev.filter((m) => m._id !== _id));
+            setStats((s) => s ? { ...s, totalMessages: Math.max(0, s.totalMessages - 1) } : s);
+        });
         return () => {
             socket.off("onlineUsers");
             socket.off("receiveMessage");
+            socket.off("messageEdited");
+            socket.off("messageDeleted");
             socket.disconnect();
         };
     }, []);
@@ -51,22 +72,57 @@ export default function Chat() {
         if (!input.trim() || !activeUser) return;
 
         const text = input.trim();
+        const optimisticId = Date.now();
         setInput("");
 
-        // optimistic update
         setMessages((prev) => [...prev, {
-            _id: Date.now(),
+            _id: optimisticId,
             senderId: myId,
             receiverId: activeUser._id,
             text,
             createdAt: new Date().toISOString(),
         }]);
 
-        await fetch(`/api/messages/${activeUser._id}`, {
+        setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
+
+        const res = await fetch(`/api/messages/${activeUser._id}`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ text }),
+            body: JSON.stringify({ text, optimisticId }),
         });
+        const data = await res.json();
+
+        if (data.success) {
+            setMessages((prev) =>
+                prev.map((m) => (m._id === optimisticId ? data.message : m))
+            );
+        } else {
+            setStats((s) => s ? { ...s, totalMessages: Math.max(0, s.totalMessages - 1) } : s);
+        }
+    };
+
+    const handleEdit = async (msgId, newText) => {
+        const res = await fetch(`/api/messages/${msgId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+            body: JSON.stringify({ text: newText }),
+        });
+        const data = await res.json();
+        if (data.success) {
+            setMessages((prev) => prev.map((m) => (m._id === msgId ? data.message : m)));
+        }
+    };
+
+    const handleDelete = async (msgId) => {
+        const res = await fetch(`/api/messages/${msgId}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        if (data.success) {
+            setMessages((prev) => prev.filter((m) => m._id !== msgId));
+            setStats((s) => s ? { ...s, totalMessages: Math.max(0, s.totalMessages - 1) } : s);
+        }
     };
 
     const handleLogout = () => {
@@ -86,6 +142,7 @@ export default function Chat() {
                 onSelect={setActiveUser}
                 onLogout={handleLogout}
                 myEmail={myEmail}
+                stats={stats}
             />
 
             <div className="flex-1 flex flex-col min-w-0">
@@ -95,7 +152,12 @@ export default function Chat() {
                             user={activeUser}
                             isOnline={onlineUsers.includes(activeUser._id)}
                         />
-                        <MessageList messages={messages} myId={myId} />
+                        <MessageList
+                            messages={messages}
+                            myId={myId}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
                         <MessageInput
                             input={input}
                             onChange={(e) => setInput(e.target.value)}
