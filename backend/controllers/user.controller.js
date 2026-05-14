@@ -1,10 +1,13 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
+import Message from "../models/message.model.js";
 
-// GET /api/users — get all users (email only)
+// GET /api/users — get all users except the logged-in user
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find().select("email -_id");
+        const users = await User.find({ _id: { $ne: req.user._id } }).select(
+            "-password"
+        );
         res.status(200).json({
             success: true,
             users,
@@ -113,6 +116,29 @@ export const deleteUser = async (req, res) => {
         res.status(200).json({
             success: true,
             message: "User deleted successfully.",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+// GET /api/users/stats — total user count and total message count
+export const getStats = async (req, res) => {
+    try {
+        const [totalUsers, totalMessages] = await Promise.all([
+            User.countDocuments(),
+            Message.countDocuments(),
+        ]);
+
+        res.status(200).json({
+            success: true,
+            stats: {
+                totalUsers,
+                totalMessages,
+            },
         });
     } catch (error) {
         res.status(500).json({

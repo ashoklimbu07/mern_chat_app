@@ -1,60 +1,88 @@
 import { Link } from "react-router-dom";
-import { Zap, ShieldCheck, Layers } from "lucide-react";
-import Navbar from "../components/Navbar";
-import Button from "../components/Button";
+import { Zap, ShieldCheck, MessageSquare } from "lucide-react";
 
 const features = [
-    { icon: Zap, title: "Real-time", desc: "Messages delivered instantly with no delay." },
+    { icon: Zap, title: "Real-time", desc: "Messages delivered instantly with Socket.IO." },
     { icon: ShieldCheck, title: "Secure", desc: "Passwords hashed, JWT-protected sessions." },
-    { icon: Layers, title: "Simple UI", desc: "Clean, distraction-free chat experience." },
+    { icon: MessageSquare, title: "Simple UI", desc: "Clean, distraction-free chat experience." },
 ];
 
 export default function Home() {
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Navbar />
+        <div className="min-h-screen flex flex-col" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+            {/* Navbar */}
+            <nav className="w-full px-8 py-5 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur flex items-center justify-center">
+                        <MessageSquare size={16} className="text-white" />
+                    </div>
+                    <span className="text-white font-bold text-lg tracking-tight">MerChat</span>
+                </div>
+                <div className="flex items-center gap-3">
+                    <Link to="/login" className="text-sm text-white/80 hover:text-white font-medium transition">
+                        Log In
+                    </Link>
+                    <Link
+                        to="/signup"
+                        className="px-4 py-2 rounded-xl bg-white text-indigo-600 text-sm font-semibold hover:bg-white/90 transition shadow-lg"
+                    >
+                        Get Started
+                    </Link>
+                </div>
+            </nav>
 
             {/* Hero */}
-            <main className="flex-1 flex flex-col items-center justify-center text-center px-4 gap-6">
-                <div className="w-16 h-16 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg">
-                    <img src="/chat-icon.png" alt="MerChat" className="w-10 h-10 object-contain" />
+            <main className="flex-1 flex flex-col items-center justify-center text-center px-6 gap-8 py-16">
+                <div className="w-20 h-20 rounded-3xl bg-white/20 backdrop-blur flex items-center justify-center shadow-2xl border border-white/30">
+                    <img src="/chat-icon.png" alt="MerChat" className="w-12 h-12 object-contain" />
                 </div>
 
-                <h1 className="text-4xl font-bold text-gray-800 max-w-lg leading-tight">
-                    Chat with anyone, <span className="text-indigo-500">instantly</span>
-                </h1>
+                <div className="space-y-4">
+                    <h1 className="text-5xl font-extrabold text-white max-w-xl leading-tight">
+                        Chat with anyone,{" "}
+                        <span className="text-yellow-300">instantly</span>
+                    </h1>
+                    <p className="text-white/70 text-lg max-w-md mx-auto">
+                        MerChat is a fast, real-time messaging app. Sign up free and start chatting in seconds.
+                    </p>
+                </div>
 
-                <p className="text-gray-500 text-base max-w-md">
-                    MerChat is a simple, fast real-time messaging app. Sign up for free and start chatting in seconds.
-                </p>
-
-                <div className="flex gap-3 mt-2">
-                    <Link to="/signup">
-                        <Button variant="primary" className="px-8 py-3 text-base">Get Started</Button>
+                <div className="flex gap-3">
+                    <Link
+                        to="/signup"
+                        className="px-7 py-3 rounded-2xl bg-white text-indigo-600 font-bold text-sm hover:bg-white/90 active:scale-95 transition-all shadow-xl"
+                    >
+                        Get Started Free
                     </Link>
-                    <Link to="/login">
-                        <Button variant="outline" className="px-8 py-3 text-base">Log In</Button>
+                    <Link
+                        to="/login"
+                        className="px-7 py-3 rounded-2xl bg-white/15 backdrop-blur text-white font-semibold text-sm border border-white/30 hover:bg-white/25 active:scale-95 transition-all"
+                    >
+                        Log In
                     </Link>
                 </div>
             </main>
 
             {/* Features */}
-            <section className="py-16 px-6 bg-white border-t border-gray-100">
-                <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
+            <section className="pb-16 px-6">
+                <div className="max-w-3xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {features.map(({ icon: Icon, title, desc }) => (
-                        <div key={title} className="flex flex-col items-center gap-3">
-                            <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center">
-                                <Icon className="text-indigo-500" size={24} />
+                        <div
+                            key={title}
+                            className="flex flex-col items-center gap-3 bg-white/10 backdrop-blur rounded-2xl px-5 py-6 border border-white/20 text-center"
+                        >
+                            <div className="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center">
+                                <Icon className="text-white" size={22} />
                             </div>
-                            <h3 className="font-semibold text-gray-800">{title}</h3>
-                            <p className="text-sm text-gray-500">{desc}</p>
+                            <h3 className="font-bold text-white">{title}</h3>
+                            <p className="text-sm text-white/60">{desc}</p>
                         </div>
                     ))}
                 </div>
             </section>
 
-            <footer className="text-center py-4 text-xs text-gray-400 border-t border-gray-100">
-                © {new Date().getFullYear()} harishankarlimbu
+            <footer className="text-center py-5 text-xs text-white/40 border-t border-white/10">
+                © {new Date().getFullYear()} harishankarlimbu · MerChat
             </footer>
         </div>
     );

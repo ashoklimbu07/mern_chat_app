@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Navbar from "../components/Navbar";
-import InputField from "../components/InputField";
-import Button from "../components/Button";
+import { MessageSquare, Mail, Lock } from "lucide-react";
 import Alert from "../components/Alert";
 
 export default function Login() {
@@ -20,7 +18,6 @@ export default function Login() {
         e.preventDefault();
         setError("");
         setLoading(true);
-
         try {
             const res = await fetch("/api/auth/login", {
                 method: "POST",
@@ -29,8 +26,9 @@ export default function Login() {
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Login failed.");
-
             localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.user.id);
+            localStorage.setItem("userEmail", data.user.email);
             navigate("/chat");
         } catch (err) {
             setError(err.message);
@@ -40,47 +38,74 @@ export default function Login() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <Navbar />
+        <div className="min-h-screen flex" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+            {/* Left panel */}
+            <div className="hidden lg:flex flex-col justify-center items-center flex-1 px-12 text-white">
+                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center mb-6 shadow-xl">
+                    <MessageSquare size={32} className="text-white" />
+                </div>
+                <h1 className="text-4xl font-bold mb-3">MerChat</h1>
+                <p className="text-white/70 text-lg text-center max-w-xs">
+                    Real-time messaging, built simple and fast.
+                </p>
+            </div>
 
-            <div className="flex-1 flex items-center justify-center px-4">
-                <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
-                    <div className="mb-6 text-center">
-                        <h2 className="text-2xl font-bold text-gray-800">Welcome back</h2>
-                        <p className="text-sm text-gray-500 mt-1">Log in to your account</p>
+            {/* Right panel */}
+            <div className="flex-1 flex items-center justify-center px-6 py-12">
+                <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
+                    <div className="mb-7">
+                        <h2 className="text-2xl font-bold text-gray-900">Welcome back</h2>
+                        <p className="text-sm text-gray-500 mt-1">Sign in to continue</p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <Alert message={error} type="error" />
 
-                        <InputField
-                            label="Email"
-                            name="email"
-                            type="email"
-                            value={form.email}
-                            onChange={handleChange}
-                            placeholder="you@example.com"
-                            required
-                        />
-                        <InputField
-                            label="Password"
-                            name="password"
-                            type="password"
-                            value={form.password}
-                            onChange={handleChange}
-                            placeholder="Your password"
-                            required
-                        />
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
+                            <div className="relative">
+                                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    name="email"
+                                    type="email"
+                                    value={form.email}
+                                    onChange={handleChange}
+                                    placeholder="you@example.com"
+                                    required
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:bg-white transition"
+                                />
+                            </div>
+                        </div>
 
-                        <Button type="submit" variant="primary" disabled={loading} className="w-full justify-center">
-                            {loading ? "Logging in..." : "Log In"}
-                        </Button>
+                        <div>
+                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
+                            <div className="relative">
+                                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                                <input
+                                    name="password"
+                                    type="password"
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    placeholder="Your password"
+                                    required
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:bg-white transition"
+                                />
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-indigo-200 disabled:opacity-60 mt-1"
+                        >
+                            {loading ? "Signing in..." : "Sign In"}
+                        </button>
                     </form>
 
-                    <p className="mt-5 text-center text-sm text-gray-500">
+                    <p className="mt-6 text-center text-sm text-gray-500">
                         Don&apos;t have an account?{" "}
-                        <Link to="/signup" className="text-indigo-500 font-medium hover:underline">
-                            Sign up
+                        <Link to="/signup" className="text-indigo-600 font-semibold hover:underline">
+                            Sign up free
                         </Link>
                     </p>
                 </div>
