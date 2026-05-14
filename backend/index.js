@@ -15,7 +15,12 @@ const app = express();
 const server = createServer(app); // wrap express with http server for socket.io
 
 // middlewares
-app.use(cors());
+app.use(
+    cors({
+        origin: process.env.CLIENT_URL || "http://localhost:5173",
+        credentials: true,
+    })
+);
 app.use(express.json());
 
 // routes

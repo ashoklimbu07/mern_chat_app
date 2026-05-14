@@ -11,6 +11,7 @@ export default defineConfig({
     babel({ presets: [reactCompilerPreset()] }),
   ],
   server: {
+    // dev only — proxies /api to local backend
     proxy: {
       "/api": {
         target: "http://localhost:3000",
