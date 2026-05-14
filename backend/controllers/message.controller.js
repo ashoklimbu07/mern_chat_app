@@ -1,4 +1,5 @@
 import Message from "../models/message.model.js";
+import { getReceiverSocketId, getIO } from "../socket/socket.js";
 
 // GET /api/messages/:userId — fetch conversation between logged-in user and :userId
 export const getMessages = async (req, res) => {
@@ -44,6 +45,12 @@ export const sendMessage = async (req, res) => {
             receiverId,
             text: text.trim(),
         });
+
+        // push to receiver in real-time via socket (server-side emit)
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId) {
+            getIO().to(receiverSocketId).emit("receiveMessage", message);
+        }
 
         res.status(201).json({
             success: true,

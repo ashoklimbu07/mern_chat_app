@@ -2,7 +2,9 @@ import { Server } from "socket.io";
 
 // maps userId (string) → socketId
 const userSocketMap = {};
+let _io = null;
 
+export const getIO = () => _io;
 export const getReceiverSocketId = (userId) => userSocketMap[userId];
 
 export const initSocket = (server) => {
@@ -12,6 +14,8 @@ export const initSocket = (server) => {
             methods: ["GET", "POST"],
         },
     });
+
+    _io = io;
 
     io.on("connection", (socket) => {
         const userId = socket.handshake.query.userId;
@@ -23,19 +27,6 @@ export const initSocket = (server) => {
 
         // broadcast updated online users list to everyone
         io.emit("onlineUsers", Object.keys(userSocketMap));
-
-        // handle incoming message
-        socket.on("sendMessage", async ({ receiverId, text, senderId }) => {
-            const receiverSocketId = getReceiverSocketId(receiverId);
-            if (receiverSocketId) {
-                io.to(receiverSocketId).emit("receiveMessage", {
-                    senderId,
-                    receiverId,
-                    text,
-                    createdAt: new Date().toISOString(),
-                });
-            }
-        });
 
         socket.on("disconnect", () => {
             if (userId) {

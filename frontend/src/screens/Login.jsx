@@ -32,6 +32,7 @@ export default function Login() {
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("userId", data.user.id);
+            localStorage.setItem("userEmail", data.user.email);
             navigate("/chat");
         } catch (err) {
             setError(err.message);
