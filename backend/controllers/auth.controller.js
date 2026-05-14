@@ -1,30 +1,38 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+
+// signs a JWT and returns the token string
+const signToken = (userId) => {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    });
+};
 
 // POST /api/auth/signup
 export const signup = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // validate 
+        // validate
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Email and password are required"
+                message: "Email and password are required",
             });
         }
 
         if (password.length < 6) {
             return res.status(400).json({
                 success: false,
-                message: "Password must be at least 6 characters"
+                message: "Password must be at least 6 characters",
             });
         }
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
                 success: false,
-                message: "User already exists"
+                message: "User already exists",
             });
         }
 
@@ -35,7 +43,7 @@ export const signup = async (req, res) => {
         // create new user
         const newUser = await User.create({
             email,
-            password: hashedPassword
+            password: hashedPassword,
         });
 
         res.status(201).json({
@@ -43,14 +51,13 @@ export const signup = async (req, res) => {
             message: "User created successfully",
             user: {
                 id: newUser._id,
-                email: newUser.email
-            }
+                email: newUser.email,
+            },
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
     }
 };
@@ -65,7 +72,7 @@ export const login = async (req, res) => {
         if (!user) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid email or password"
+                message: "Invalid email or password",
             });
         }
 
@@ -74,23 +81,25 @@ export const login = async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({
                 success: false,
-                message: "Invalid email or password"
+                message: "Invalid email or password",
             });
         }
+
+        const token = signToken(user._id);
 
         res.status(200).json({
             success: true,
             message: "Login successful",
+            token,
             user: {
                 id: user._id,
-                email: user.email
-            }
+                email: user.email,
+            },
         });
-
     } catch (error) {
         res.status(500).json({
             success: false,
-            message: error.message
+            message: error.message,
         });
     }
 };

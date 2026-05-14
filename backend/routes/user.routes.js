@@ -1,12 +1,20 @@
 import { Router } from "express";
-import { getUsers, getUserById } from "../controllers/user.controller.js";
+import {
+    getUsers,
+    getUserById,
+    updateUser,
+    deleteUser,
+} from "../controllers/user.controller.js";
+import protectRoute from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-// GET /api/users - get all users (email only)
+// public route no token required
 router.get("/", getUsers);
-
-// GET /api/users/:id - get user by id
 router.get("/:id", getUserById);
+
+//protected jwt token required
+router.put("/:id", protectRoute, updateUser);
+router.delete("/:id", protectRoute, deleteUser);
 
 export default router;
