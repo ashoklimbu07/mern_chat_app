@@ -5,6 +5,7 @@ import Sidebar from "../components/chat/Sidebar";
 import ChatHeader from "../components/chat/ChatHeader";
 import MessageList from "../components/chat/MessageList";
 import MessageInput from "../components/chat/MessageInput";
+import { MessageSquareDashed } from "lucide-react";
 
 export default function Chat() {
     const navigate = useNavigate();
@@ -77,7 +78,7 @@ export default function Chat() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen overflow-hidden bg-gray-100">
             <Sidebar
                 users={users}
                 activeUser={activeUser}
@@ -87,7 +88,7 @@ export default function Chat() {
                 myEmail={myEmail}
             />
 
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col min-w-0">
                 {activeUser ? (
                     <>
                         <ChatHeader
@@ -102,11 +103,15 @@ export default function Chat() {
                         />
                     </>
                 ) : (
-                    <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 mb-3 text-indigo-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        <p className="text-sm">Select a user to start chatting</p>
+                    <div className="flex-1 flex flex-col items-center justify-center gap-4"
+                        style={{ background: "linear-gradient(180deg, #f8faff 0%, #f1f4fd 100%)" }}>
+                        <div className="w-16 h-16 rounded-2xl bg-indigo-100 flex items-center justify-center">
+                            <MessageSquareDashed size={32} className="text-indigo-400" />
+                        </div>
+                        <div className="text-center">
+                            <p className="text-gray-700 font-semibold">No conversation selected</p>
+                            <p className="text-sm text-gray-400 mt-1">Pick someone from the sidebar to start chatting</p>
+                        </div>
                     </div>
                 )}
             </div>
