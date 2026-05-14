@@ -100,6 +100,21 @@ The app runs at `http://localhost:5173`. API requests are proxied to the backend
 
 ---
 
+## Features
+
+- User registration and login with hashed passwords (bcrypt)
+- JWT-based authentication and route protection — unauthenticated users are redirected to login
+- Full user CRUD with authorization — users can only update or delete their own account
+- Real-time messaging via Socket.IO — messages are pushed server-side after saving to MongoDB
+- Edit your own messages — updates are saved to the database and pushed to the receiver in real-time via `messageEdited` socket event; edited messages are flagged with an `edited` field
+- Delete your own messages — removed from the database and the receiver's UI is updated instantly via `messageDeleted` socket event; only the sender can delete their own messages (403 otherwise)
+- Chat history persisted in MongoDB — full conversation loaded on contact select
+- Online/offline presence — live user status broadcast via `onlineUsers` socket event on connect/disconnect
+- Search contacts by email in the sidebar
+- Total user and message count stats — live counter updates on send, receive, and delete without a page refresh
+
+---
+
 ## API Endpoints
 
 ### Auth
@@ -121,28 +136,20 @@ The app runs at `http://localhost:5173`. API requests are proxied to the backend
 
 ### Messages
 
-| Method | Endpoint              | Auth | Description              |
-| ------ | --------------------- | ---- | ------------------------ |
-| GET    | /api/messages/:userId | ✅   | Get conversation history |
-| POST   | /api/messages/:userId | ✅   | Send a message           |
+| Method | Endpoint              | Auth | Description                                   |
+| ------ | --------------------- | ---- | --------------------------------------------- |
+| GET    | /api/messages/:userId | ✅   | Get conversation history with a specific user |
+| POST   | /api/messages/:userId | ✅   | Send a message                                |
+| PUT    | /api/messages/:id     | ✅   | Edit own message (owner only)                 |
+| DELETE | /api/messages/:id     | ✅   | Delete own message (owner only)               |
 
 ---
 
 ## Socket.IO Events
 
-| Event            | Direction         | Payload                                     | Description                                |
-| ---------------- | ----------------- | ------------------------------------------- | ------------------------------------------ |
-| `onlineUsers`    | Server → All      | `string[]` (array of user IDs)              | Broadcast when a user connects/disconnects |
-| `receiveMessage` | Server → Receiver | `{ senderId, receiverId, text, createdAt }` | Delivered to receiver in real-time         |
-
----
-
-## Features
-
-- User registration and login with hashed passwords (bcrypt)
-- JWT-based authentication and route protection
-- Full user CRUD with authorization (users can only modify their own account)
-- Real-time messaging via Socket.IO
-- Chat history persisted in MongoDB
-- Online/offline presence indicators
-- Total user and message count stats endpoint
+| Event            | Direction         | Payload                        | Description                                      |
+| ---------------- | ----------------- | ------------------------------ | ------------------------------------------------ |
+| `onlineUsers`    | Server → All      | `string[]` (array of user IDs) | Broadcast when a user connects or disconnects    |
+| `receiveMessage` | Server → Receiver | Message document               | Pushed to receiver after message is saved to DB  |
+| `messageEdited`  | Server → Receiver | Updated message document       | Pushed to receiver when sender edits a message   |
+| `messageDeleted` | Server → Receiver | `{ _id: string }`              | Pushed to receiver when sender deletes a message |
