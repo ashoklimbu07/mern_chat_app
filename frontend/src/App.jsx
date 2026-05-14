@@ -4,6 +4,11 @@ import Login from "./screens/Login";
 import Signup from "./screens/Signup";
 import Chat from "./screens/Chat";
 
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem("token");
+  return token ? children : <Navigate to="/login" replace />;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -11,7 +16,11 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/chat" element={<Chat />} />
+        <Route path="/chat" element={
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   );
