@@ -31,6 +31,7 @@ export default function Login() {
             if (!res.ok) throw new Error(data.message || "Login failed.");
 
             localStorage.setItem("token", data.token);
+            localStorage.setItem("userId", data.user.id);
             navigate("/chat");
         } catch (err) {
             setError(err.message);
