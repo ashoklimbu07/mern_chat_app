@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MessageSquare, Mail, Lock, CheckCircle } from "lucide-react";
-import Alert from "../components/Alert";
+import { Mail, Lock, CheckCircle } from "lucide-react";
 
 export default function Signup() {
     const navigate = useNavigate();
@@ -40,98 +39,104 @@ export default function Signup() {
     };
 
     return (
-        <div className="min-h-screen flex" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
-            {/* Left panel */}
-            <div className="hidden lg:flex flex-col justify-center items-center flex-1 px-12 text-white">
-                <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur flex items-center justify-center mb-6 shadow-xl">
-                    <MessageSquare size={32} className="text-white" />
+        <div className="min-h-screen bg-gray-900 flex">
+            {/* Left branding panel */}
+            <div className="hidden lg:flex flex-col justify-center items-center flex-1 px-12 border-r border-gray-800">
+                <div className="w-16 h-16 rounded-2xl bg-indigo-500 flex items-center justify-center mb-6 shadow-2xl shadow-indigo-500/30 overflow-hidden">
+                    <img src="/chat-icon.png" alt="MerChat" className="w-10 h-10 object-contain" />
                 </div>
-                <h1 className="text-4xl font-bold mb-3">MerChat</h1>
-                <p className="text-white/70 text-lg text-center max-w-xs">
+                <h1 className="text-4xl font-bold text-white mb-3">MerChat</h1>
+                <p className="text-gray-400 text-lg text-center max-w-xs">
                     Join thousands of users chatting in real-time.
                 </p>
             </div>
 
-            {/* Right panel */}
+            {/* Right form panel */}
             <div className="flex-1 flex items-center justify-center px-6 py-12">
-                <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl p-8">
-                    <div className="mb-7">
-                        <h2 className="text-2xl font-bold text-gray-900">Create account</h2>
-                        <p className="text-sm text-gray-500 mt-1">Free forever, no credit card needed</p>
-                    </div>
+                <div className="w-full max-w-md">
+                    <div className="bg-gray-800 rounded-3xl border border-gray-700/50 shadow-2xl p-8">
+                        <div className="mb-7">
+                            <h2 className="text-2xl font-bold text-white">Create account</h2>
+                            <p className="text-sm text-gray-400 mt-1">Free forever, no credit card needed</p>
+                        </div>
 
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                        <Alert message={error} type="error" />
+                        {error && (
+                            <div className="mb-4 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-sm text-red-400">
+                                {error}
+                            </div>
+                        )}
                         {success && (
-                            <div className="flex items-center gap-2 text-sm text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2.5">
+                            <div className="mb-4 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-400">
                                 <CheckCircle size={15} />
                                 {success}
                             </div>
                         )}
 
-                        <div>
-                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
-                            <div className="relative">
-                                <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input
-                                    name="email"
-                                    type="email"
-                                    value={form.email}
-                                    onChange={handleChange}
-                                    placeholder="you@example.com"
-                                    required
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:bg-white transition"
-                                />
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Email</label>
+                                <div className="relative">
+                                    <Mail size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        placeholder="you@example.com"
+                                        required
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 text-sm text-gray-200 placeholder-gray-500 outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
-                            <div className="relative">
-                                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input
-                                    name="password"
-                                    type="password"
-                                    value={form.password}
-                                    onChange={handleChange}
-                                    placeholder="Min. 6 characters"
-                                    required
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:bg-white transition"
-                                />
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Password</label>
+                                <div className="relative">
+                                    <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        placeholder="Min. 6 characters"
+                                        required
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 text-sm text-gray-200 placeholder-gray-500 outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Confirm Password</label>
-                            <div className="relative">
-                                <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                                <input
-                                    name="confirm"
-                                    type="password"
-                                    value={form.confirm}
-                                    onChange={handleChange}
-                                    placeholder="Repeat your password"
-                                    required
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-800 bg-gray-50 outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 focus:bg-white transition"
-                                />
+                            <div>
+                                <label className="block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Confirm Password</label>
+                                <div className="relative">
+                                    <Lock size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-500" />
+                                    <input
+                                        name="confirm"
+                                        type="password"
+                                        value={form.confirm}
+                                        onChange={handleChange}
+                                        placeholder="Repeat your password"
+                                        required
+                                        className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-700/50 border border-gray-600/50 text-sm text-gray-200 placeholder-gray-500 outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/60 transition"
+                                    />
+                                </div>
                             </div>
-                        </div>
 
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="w-full py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-semibold hover:opacity-90 active:scale-[0.98] transition-all shadow-lg shadow-indigo-200 disabled:opacity-60 mt-1"
-                        >
-                            {loading ? "Creating account..." : "Create Account"}
-                        </button>
-                    </form>
+                            <button
+                                type="submit"
+                                disabled={loading}
+                                className="w-full py-2.5 rounded-xl bg-indigo-500 text-white text-sm font-semibold hover:bg-indigo-600 active:scale-[0.98] transition-all shadow-lg shadow-indigo-500/20 disabled:opacity-60 mt-1"
+                            >
+                                {loading ? "Creating account..." : "Create Account"}
+                            </button>
+                        </form>
 
-                    <p className="mt-6 text-center text-sm text-gray-500">
-                        Already have an account?{" "}
-                        <Link to="/login" className="text-indigo-600 font-semibold hover:underline">
-                            Sign in
-                        </Link>
-                    </p>
+                        <p className="mt-6 text-center text-sm text-gray-500">
+                            Already have an account?{" "}
+                            <Link to="/login" className="text-indigo-400 font-semibold hover:text-indigo-300 transition">
+                                Sign in
+                            </Link>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
