@@ -1,16 +1,6 @@
-import { useEffect, useState } from "react";
 import { Users, MessageSquare, LogOut } from "lucide-react";
 
-export default function Sidebar({ users, activeUser, onlineUsers, onSelect, onLogout, myEmail }) {
-    const [stats, setStats] = useState(null);
-    const token = localStorage.getItem("token");
-
-    useEffect(() => {
-        if (!token) return;
-        fetch("/api/users/stats", { headers: { Authorization: `Bearer ${token}` } })
-            .then((r) => r.json())
-            .then((data) => { if (data.success) setStats(data.stats); });
-    }, [token]);
+export default function Sidebar({ users, activeUser, onlineUsers, onSelect, onLogout, myEmail, stats }) {
 
     return (
         <div className="w-72 bg-gray-900 flex flex-col h-full">
