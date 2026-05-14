@@ -1,10 +1,12 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 
-// GET /api/users — get all users (email only)
+// GET /api/users — get all users except the logged-in user
 export const getUsers = async (req, res) => {
     try {
-        const users = await User.find().select("email -_id");
+        const users = await User.find({ _id: { $ne: req.user._id } }).select(
+            "-password"
+        );
         res.status(200).json({
             success: true,
             users,

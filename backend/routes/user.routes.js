@@ -10,7 +10,7 @@ import protectRoute from "../middlewares/auth.middleware.js";
 const router = Router();
 
 // public route no token required
-router.get("/", getUsers);
+router.get("/", protectRoute, getUsers);
 router.get("/:id", getUserById);
 
 //protected jwt token required
