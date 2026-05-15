@@ -11,9 +11,15 @@ function Skeleton({ className }) {
 export default function Sidebar({ users, activeUser, onlineUsers, onSelect, onLogout, myEmail, stats }) {
     const [search, setSearch] = useState("");
 
-    const filtered = search.trim()
+    const filtered = (search.trim()
         ? users.filter((u) => u.email.toLowerCase().includes(search.toLowerCase()))
-        : users;
+        : users
+    ).slice().sort((a, b) => {
+        // online users float to the top
+        const aOnline = onlineUsers.includes(a._id) ? 0 : 1;
+        const bOnline = onlineUsers.includes(b._id) ? 0 : 1;
+        return aOnline - bOnline;
+    });
 
     const usersLoading = users.length === 0;
     const statsLoading = !stats;
