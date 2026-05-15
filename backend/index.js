@@ -23,6 +23,9 @@ app.use(
 );
 app.use(express.json());
 
+// health check — used by cron-job.org to keep Render from sleeping
+app.get("/health", (req, res) => res.json({ status: "ok" }));
+
 // routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
