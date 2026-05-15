@@ -31,11 +31,13 @@ export default function Chat() {
 
     // socket setup
     useEffect(() => {
+        // Inject userId at connect time — not at module load — to avoid stale/null value
+        socket.io.opts.query = { userId: myId };
         socket.connect();
         socket.on("onlineUsers", setOnlineUsers);
         socket.on("receiveMessage", (msg) => {
             setMessages((prev) => [...prev, msg]);
-            // increment total count when we receive a message from someone else
+            // sync stats counter on incoming message
             setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
         });
         socket.on("messageEdited", (updated) =>
@@ -77,7 +79,7 @@ export default function Chat() {
         const optimisticId = Date.now();
         setInput("");
 
-        // optimistic update with a temp ID
+        // optimistic UI — temp ID replaced after server confirms
         setMessages((prev) => [...prev, {
             _id: optimisticId,
             senderId: myId,
@@ -86,7 +88,7 @@ export default function Chat() {
             createdAt: new Date().toISOString(),
         }]);
 
-        // increment total message count immediately
+        // increment stats optimistically
         setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
 
         const res = await api(`/api/messages/${activeUser._id}`, {
@@ -96,13 +98,13 @@ export default function Chat() {
         });
         const data = await res.json();
 
-        // replace the optimistic entry with the real saved message
+        // replace temp message with server-confirmed version
         if (data.success) {
             setMessages((prev) =>
                 prev.map((m) => (m._id === optimisticId ? data.message : m))
             );
         } else {
-            // roll back count if save failed
+            // roll back on failure
             setStats((s) => s ? { ...s, totalMessages: Math.max(0, s.totalMessages - 1) } : s);
         }
     };

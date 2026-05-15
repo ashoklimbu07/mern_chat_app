@@ -50,11 +50,9 @@ function MessageBubble({ msg, isMine, isFirst, onEdit, onDelete }) {
     return (
         <div className={`flex flex-col ${isMine ? "items-end" : "items-start"} ${isFirst ? "mt-3" : "mt-0.5"}`}>
             <div className={`flex ${isMine ? "justify-end" : "justify-start"} w-full`}>
-                {/* Avatar for received messages */}
+                {/* Spacer to align received bubbles consistently (no avatar) */}
                 {!isMine && (
-                    <div className={`w-7 h-7 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 text-white flex items-center justify-center text-xs font-bold uppercase flex-shrink-0 mr-2 self-end mb-0.5 ${isFirst ? "opacity-100" : "opacity-0"}`}>
-                        {String(msg.senderId?._id || msg.senderId || "?")[0]?.toUpperCase() || "?"}
-                    </div>
+                    <div className="w-7 flex-shrink-0 mr-2" />
                 )}
 
                 <div className="max-w-sm flex flex-col">
