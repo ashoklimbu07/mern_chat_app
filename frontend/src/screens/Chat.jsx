@@ -37,7 +37,7 @@ export default function Chat() {
         socket.on("onlineUsers", setOnlineUsers);
         socket.on("receiveMessage", (msg) => {
             setMessages((prev) => [...prev, msg]);
-            // sync stats counter on incoming message
+            // sync total message count on incoming message
             setStats((s) => s ? { ...s, totalMessages: s.totalMessages + 1 } : s);
         });
         socket.on("messageEdited", (updated) =>

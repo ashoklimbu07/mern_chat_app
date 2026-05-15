@@ -12,7 +12,7 @@ export default function Sidebar({ users, activeUser, onlineUsers, onSelect, onLo
         <div className="w-72 bg-gray-900 flex flex-col h-full">
             {/* Header */}
             <div className="px-5 pt-6 pb-4">
-                {/* Logo — personal app icon from public/ */}
+                {/* Logo */}
                 <div className="flex items-center gap-2 mb-5">
                     <div className="w-8 h-8 rounded-xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/30 overflow-hidden">
                         <img src="/chat-icon.png" alt="MerChat" className="w-6 h-6 object-contain" />
@@ -20,22 +20,24 @@ export default function Sidebar({ users, activeUser, onlineUsers, onSelect, onLo
                     <span className="text-white font-bold text-lg tracking-tight">MerChat</span>
                 </div>
 
-                {/* Stats cards */}
+                {/* Stats — 2 cards */}
                 {stats && (
-                    <div className="grid grid-cols-2 gap-2 mb-4">
-                        <div className="bg-gray-800 rounded-xl px-3 py-2.5 border border-gray-700/50">
-                            <div className="flex items-center gap-1.5 mb-1">
-                                <Users size={12} className="text-indigo-400" />
-                                <span className="text-xs text-gray-400 font-medium">Users</span>
+                    <div className="grid grid-cols-2 gap-1.5 mb-4">
+                        <div className="bg-gray-800 rounded-lg px-2.5 py-2 border border-gray-700/50">
+                            <div className="flex items-center gap-1 mb-1">
+                                <Users size={10} className="text-indigo-400" />
+                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Users</span>
                             </div>
-                            <p className="text-xl font-bold text-white">{stats.totalUsers}</p>
+                            <p className="text-lg font-bold text-white leading-none">{stats.totalUsers}</p>
+                            <p className="text-[9px] text-gray-600 mt-0.5">on server</p>
                         </div>
-                        <div className="bg-gray-800 rounded-xl px-3 py-2.5 border border-gray-700/50">
-                            <div className="flex items-center gap-1.5 mb-1">
-                                <MessageSquare size={12} className="text-indigo-400" />
-                                <span className="text-xs text-gray-400 font-medium">Messages</span>
+                        <div className="bg-gray-800 rounded-lg px-2.5 py-2 border border-gray-700/50">
+                            <div className="flex items-center gap-1 mb-1">
+                                <MessageSquare size={10} className="text-indigo-400" />
+                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wide">Chats</span>
                             </div>
-                            <p className="text-xl font-bold text-white">{stats.totalMessages}</p>
+                            <p className="text-lg font-bold text-white leading-none">{stats.totalMessages}</p>
+                            <p className="text-[9px] text-gray-600 mt-0.5">on server</p>
                         </div>
                     </div>
                 )}
